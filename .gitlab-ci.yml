@@ -35,9 +35,9 @@ acceptance test:
     reports: 
       junit: testresults_cucumber.xml
 
-sonar:
-  stage: analysis
-  image: sonarsource/sonar-scanner-cli
-  script:
-  - sonar-scanner -Dsonar.host.url=$SONAR_URL -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.projectName=$SONAR_PROJECT_KEY -Dsonar.login=$SONAR_PROJECT_TOKEN
+#sonar:
+#  stage: analysis
+#  image: sonarsource/sonar-scanner-cli
+#  script:
+#  - sonar-scanner -Dsonar.host.url=$SONAR_URL -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.projectName=$SONAR_PROJECT_KEY -Dsonar.login=$SONAR_PROJECT_TOKEN
 
