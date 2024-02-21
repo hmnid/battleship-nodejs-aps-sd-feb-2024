@@ -1,4 +1,4 @@
-const { Worker, isMainThread } = require('worker_threads');
+const {Worker, isMainThread} = require('worker_threads');
 const readline = require('readline-sync');
 const gameController = require("./GameController/gameController.js");
 const cliColor = require('cli-color');
@@ -14,10 +14,10 @@ const PRINT_COMPUTER_FAIL = cliColor.redBright
 
 class Battleship {
     start() {
-        telemetryWorker = new Worker("./TelemetryClient/telemetryClient.js");   
+        telemetryWorker = new Worker("./TelemetryClient/telemetryClient.js");
 
         console.log("Starting...");
-        telemetryWorker.postMessage({eventName: 'ApplicationStarted', properties:  {Technology: 'Node.js'}});
+        telemetryWorker.postMessage({eventName: 'ApplicationStarted', properties: {Technology: 'Node.js'}});
 
         console.log(cliColor.magenta("                                     |__"));
         console.log(cliColor.magenta("                                     |\\/"));
@@ -39,7 +39,6 @@ class Battleship {
     }
 
     StartGame() {
-        console.clear();
         console.log("                  __");
         console.log("                 /  \\");
         console.log("           .-.  |    |");
@@ -61,7 +60,10 @@ class Battleship {
             var position = Battleship.ParsePosition(readline.question());
             var isHit = gameController.CheckIsHit(this.enemyFleet, position);
 
-            telemetryWorker.postMessage({eventName: 'Player_ShootPosition', properties:  {Position: position.toString(), IsHit: isHit}});
+            telemetryWorker.postMessage({
+                eventName: 'Player_ShootPosition',
+                properties: {Position: position.toString(), IsHit: isHit}
+            });
 
             if (isHit) {
                 beep();
@@ -74,8 +76,7 @@ class Battleship {
                 console.log(cliColor.red("            -   (\\- |  \\ /  |  /)  -"));
                 console.log(cliColor.red("                 -\\  \\     /  /-"));
                 console.log(cliColor.red("                   \\  \\   /  /"));
-            }
-            else {
+            } else {
                 console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
                 console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
                 console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
@@ -91,7 +92,10 @@ class Battleship {
             var computerPos = this.GetRandomPosition();
             var isHit = gameController.CheckIsHit(this.myFleet, computerPos);
 
-            telemetryWorker.postMessage({eventName: 'Computer_ShootPosition', properties:  {Position: computerPos.toString(), IsHit: isHit}});
+            telemetryWorker.postMessage({
+                eventName: 'Computer_ShootPosition',
+                properties: {Position: computerPos.toString(), IsHit: isHit}
+            });
 
             console.log();
             console.log(`Computer shot in ${computerPos.column}${computerPos.row} and ` + (isHit ? PRINT_COMPUTER_SUCCESS('has hit your ship !') : PRINT_COMPUTER_FAIL('miss')));
@@ -106,6 +110,15 @@ class Battleship {
                 console.log(cliColor.red("            -   (\\- |  \\ /  |  /)  -"));
                 console.log(cliColor.red("                 -\\  \\     /  /-"));
                 console.log(cliColor.red("                   \\  \\   /  /"));
+            } else {
+                console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
+                console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
+                console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
+                console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
+                console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
+                console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
+                console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
+                console.log(cliColor.blue(`               ~~~~~~~~~~~~~~~~~~~~~`))
             }
 
             console.log("----------------------------------------------")
@@ -143,10 +156,13 @@ class Battleship {
             console.log();
             console.log(cliColor.bgGreen(`Please enter the positions for the ${ship.name} (size: ${ship.size})`));
             for (var i = 1; i < ship.size + 1; i++) {
-                    console.log(cliColor.bgGreen(`Enter position ${i} of ${ship.size} (i.e A3):`));
-                    const position = readline.question();
-                    telemetryWorker.postMessage({eventName: 'Player_PlaceShipPosition', properties:  {Position: position, Ship: ship.name, PositionInShip: i}});
-                    ship.addPosition(Battleship.ParsePosition(position));
+                console.log(cliColor.bgGreen(`Enter position ${i} of ${ship.size} (i.e A3):`));
+                const position = readline.question();
+                telemetryWorker.postMessage({
+                    eventName: 'Player_PlaceShipPosition',
+                    properties: {Position: position, Ship: ship.name, PositionInShip: i}
+                });
+                ship.addPosition(Battleship.ParsePosition(position));
             }
         })
     }
@@ -154,27 +170,196 @@ class Battleship {
     InitializeEnemyFleet() {
         this.enemyFleet = gameController.InitializeShips();
 
-        this.enemyFleet[0].addPosition(new position(letters.B, 4));
-        this.enemyFleet[0].addPosition(new position(letters.B, 5));
-        this.enemyFleet[0].addPosition(new position(letters.B, 6));
-        this.enemyFleet[0].addPosition(new position(letters.B, 7));
-        this.enemyFleet[0].addPosition(new position(letters.B, 8));
+        const VARIANTS = [
+            [
+                [
+                    ["B", 4],
+                    ["B", 5],
+                    ["B", 6],
+                    ["B", 7],
+                    ["B", 8],
+                ],
+                [
+                    ["E", 6],
+                    ["E", 7],
+                    ["E", 8],
+                    ["E", 9],
+                ],
+                [
+                    ["A", 3],
+                    ["B", 3],
+                    ["C", 3],
+                ],
+                [
+                    ["F", 8],
+                    ["G", 8],
+                    ["H", 8],
+                ],
+                [
+                    ["C", 5],
+                    ["C", 6],
+                ],
+            ],
+            [
+                [
+                    ["C", 4],
+                    ["C", 5],
+                    ["C", 6],
+                    ["C", 7],
+                    ["C", 8],
+                ],
+                [
+                    ["D", 6],
+                    ["D", 7],
+                    ["D", 8],
+                    ["D", 9],
+                ],
+                [
+                    ["A", 4],
+                    ["B", 4],
+                    ["C", 4],
+                ],
+                [
+                    ["F", 1],
+                    ["G", 1],
+                    ["H", 1],
+                ],
+                [
+                    ["E", 5],
+                    ["E", 6],
+                ],
+            ],
+            [
+                [
+                    ["B", 1],
+                    ["C", 1],
+                    ["D", 1],
+                    ["E", 1],
+                    ["F", 1],
+                ],
+                [
+                    ["C", 3],
+                    ["D", 3],
+                    ["E", 3],
+                    ["F", 3],
+                ],
+                [
+                    ["D", 5],
+                    ["E", 5],
+                    ["F", 5],
+                ],
+                [
+                    ["H", 4],
+                    ["H", 5],
+                    ["H", 6],
+                ],
+                [
+                    ["A", 3],
+                    ["A", 4],
+                ],
+            ],
+            [
+                [
+                    ["A", 3],
+                    ["A", 4],
+                    ["A", 5],
+                    ["A", 6],
+                    ["A", 7],
+                ],
+                [
+                    ["C", 5],
+                    ["C", 6],
+                    ["C", 7],
+                    ["C", 8],
+                ],
+                [
+                    ["F", 7],
+                    ["G", 7],
+                    ["H", 7],
+                ],
+                [
+                    ["F", 1],
+                    ["F", 2],
+                    ["F", 3],
+                ],
+                [
+                    ["C", 1],
+                    ["D", 1],
+                ],
+            ],
+            [
+                [
+                    ["F", 4],
+                    ["F", 5],
+                    ["F", 6],
+                    ["F", 7],
+                    ["F", 8],
+                ],
+                [
+                    ["H", 1],
+                    ["H", 2],
+                    ["H", 3],
+                    ["H", 4],
+                ],
+                [
+                    ["B", 6],
+                    ["B", 7],
+                    ["B", 8],
+                ],
+                [
+                    ["D", 2],
+                    ["E", 2],
+                    ["F", 2],
+                ],
+                [
+                    ["A", 1],
+                    ["B", 1],
+                ],
+            ],
+            [
+                [
+                    ["C", 2],
+                    ["C", 3],
+                    ["C", 4],
+                    ["C", 5],
+                    ["C", 6],
+                ],
+                [
+                    ["A", 5],
+                    ["A", 6],
+                    ["A", 7],
+                    ["A", 8],
+                ],
+                [
+                    ["H", 5],
+                    ["H", 6],
+                    ["H", 7],
+                ],
+                [
+                    ["E", 3],
+                    ["F", 3],
+                    ["G", 3],
+                ],
+                [
+                    ["E", 5],
+                    ["E", 6],
+                ],
+            ]
+        ];
 
-        this.enemyFleet[1].addPosition(new position(letters.E, 6));
-        this.enemyFleet[1].addPosition(new position(letters.E, 7));
-        this.enemyFleet[1].addPosition(new position(letters.E, 8));
-        this.enemyFleet[1].addPosition(new position(letters.E, 9));
+        const random_variant_index = Math.floor(Math.random() * VARIANTS.length);
+        const random_fleet = VARIANTS[random_variant_index];
 
-        this.enemyFleet[2].addPosition(new position(letters.A, 3));
-        this.enemyFleet[2].addPosition(new position(letters.B, 3));
-        this.enemyFleet[2].addPosition(new position(letters.C, 3));
+        if (process.env.DEBUG_LOG) {
+            console.debug("Enemy fleet: \n", JSON.stringify(random_fleet));
+        }
 
-        this.enemyFleet[3].addPosition(new position(letters.F, 8));
-        this.enemyFleet[3].addPosition(new position(letters.G, 8));
-        this.enemyFleet[3].addPosition(new position(letters.H, 8));
-
-        this.enemyFleet[4].addPosition(new position(letters.C, 5));
-        this.enemyFleet[4].addPosition(new position(letters.C, 6));
+        for (let i = 0; i < random_fleet.length; i++) {
+            const ship = random_fleet[i];
+            ship.forEach(([letter, number]) => {
+                this.enemyFleet[i].addPosition(new position(letters[letter], number))
+            })
+        }
     }
 }
 

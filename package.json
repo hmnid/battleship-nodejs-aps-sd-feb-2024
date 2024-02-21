@@ -4,6 +4,8 @@
   "description": "Battleship with Node JS",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "DEBUG_LOG=1 node index.js",
     "mocha": "mocha ./**/*Tests.js",
     "cucumber": "./node_modules/.bin/cucumber-js ./GameController_ATDD",
     "test": "npm run mocha && npm run cucumber"
