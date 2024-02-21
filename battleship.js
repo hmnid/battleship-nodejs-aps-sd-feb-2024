@@ -94,8 +94,6 @@ class Battleship {
                 console.log("                 -\\  \\     /  /-");
                 console.log("                   \\  \\   /  /");
             }
-
-            console.log("----------------------------------------------")
         }
         while (true);
     }
